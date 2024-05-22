@@ -1,10 +1,10 @@
 import uvicorn as uvicorn
 from fastapi import FastAPI
-from app.routes.users_router import userRouter
+from app.routes.users_router import user_router
 
 
 app = FastAPI()
-app.include_router(userRouter, prefix='/user')
+app.include_router(user_router, prefix='/user')
 
 
 
