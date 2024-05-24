@@ -31,11 +31,21 @@ async def get_all(collection_name):
 
 
 async def get_by_id( collection_name,object_id):
+    """
+      Retrieves a document by its ID from a specified collection in the database.
+
+      Args:
+          object_id (any): The ID of the document to retrieve.
+          collection_name (str): The name of the collection in the database.
+
+      Returns:
+          dict: A dictionary containing the retrieved document.
+      """
     try:
-        user = await my_db[collection_name].find_one({"id": object_id})
-        if not user:
-            raise ValueError("User not found")
-        return to_json(user)
+        result = await my_db[collection_name].find_one({"id": object_id})
+        if not result:
+            raise ValueError("document not found")
+        return to_json(result)
     except ValueError as ve:
         raise ve
     except Exception as e:
@@ -45,6 +55,16 @@ async def get_by_id( collection_name,object_id):
 
 
 async def add(collection_name, document):
+    """
+       Adds a document to a specified collection in the database.
+
+       Args:
+           document (dict): The document to be added.
+           collection_name (str): The name of the collection in the database.
+
+       Returns:
+           dict: A dictionary containing the inserted ID.
+       """
     try:
         result = await my_db[collection_name].insert_one(document)
         return {"inserted_id": str(result.inserted_id)}
@@ -52,6 +72,17 @@ async def add(collection_name, document):
         raise RuntimeError(f"Error adding document to collection {collection_name}: {e}")
 
 async def login(collection_name, object_name, object_password):
+    """
+        Logs in a user.
+
+        Args:
+            collection_name (str): The name of the collection in the database.
+            object_name (str): The username of the user.
+            object_password (str): The password of the user.
+
+        Returns:
+            list: A list of dictionaries containing user information.
+        """
     try:
         all_users = await get_all(collection_name)
         filtered_users = [user for user in all_users if user['name'] == object_name and user['password'] == object_password]
@@ -66,6 +97,16 @@ async def login(collection_name, object_name, object_password):
 
 
 async def update(collection_name,object):
+    """
+      Updates a document in the specified collection.
+
+      Args:
+          document (dict): The updated document.
+          collection_name (str): The name of the collection in the database.
+
+      Returns:
+          str: A message indicating the success of the update.
+      """
     try:
         existing_document = await get_by_id( collection_name,object['id'])
         if existing_document:

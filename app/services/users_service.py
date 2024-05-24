@@ -6,21 +6,46 @@ from app.models.user_model import User
 from app.database.database_connection import my_db
 from app.database import database_functions
 async def get_all_users():
+    """
+      Retrieves all users.
+
+      Returns:
+          list: A list containing dictionaries of user information.
+      """
     try:
         return await database_functions.get_all("users")
     except Exception as e:
         raise e
 async def get_user_by_id(user_id):
+    """
+    Retrieves a user by their ID.
+
+    Args:
+        user_id (int): The ID of the user to retrieve.
+
+    Returns:
+        dict: A dictionary containing the user's information.
+    """
     try:
-     user= await database_functions.get_by_id("users", user_id)
-     if user is None:
-        raise ValueError("user not found")
+        user = await database_functions.get_by_id("users",user_id)
+        if user is None:
+            raise ValueError("User not found")
+        return user
     except ValueError as ve:
         raise ve
     except Exception as e:
-         raise e
+        raise e
 
 async def create_user(new_user: User):
+    """
+       Creates a new user.
+
+       Args:
+           new_user (User): The user object to be created.
+
+       Returns:
+           dict: A dictionary containing the result of adding the user.
+       """
     try:
         new_user.id = await last_id() + 1
         new_user.balance = 0.0
@@ -29,8 +54,35 @@ async def create_user(new_user: User):
     except Exception as e:
         raise e
 
+async  def login_user(user_name, user_password):
+    """
+       Logs in a user.
+
+       Args:
+           user_name (str): The username of the user.
+           user_password (str): The password of the user.
+
+       Returns:
+           list: A list of dictionaries containing user information.
+       """
+    try:
+       return  await database_functions.login("users",user_name,user_password)
+    except Exception as e:
+        raise e
+
+
 
 async def update_user(user_id: int, user_update: User):
+    """
+      Updates a user's profile.
+
+      Args:
+          user_id (int): The ID of the user to update.
+          new_user (User): The updated user object.
+
+      Returns:
+          str: A message indicating the success of the update.
+      """
     try:
         existing_user = await get_user_by_id(user_id)
         if existing_user is None:
@@ -42,11 +94,6 @@ async def update_user(user_id: int, user_update: User):
     except Exception as e:
         raise e
 
-async  def login_user(user_name, user_password):
-    try:
-       return  await database_functions.login("users",user_name,user_password)
-    except Exception as e:
-        raise e
 
 
 
