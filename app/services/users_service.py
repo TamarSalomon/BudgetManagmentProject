@@ -12,26 +12,22 @@ async def get_all_users():
         raise e
 async def get_user_by_id(user_id):
     try:
-         return await database_functions.get_by_id("users", user_id)
+     user= await database_functions.get_by_id("users", user_id)
+     if user is None:
+        raise ValueError("user not found")
+    except ValueError as ve:
+        raise ve
     except Exception as e:
          raise e
 
-async def create_user(user):
-    """
-    Creates a new user document.
-    Args:
-        user (dict): The user document to create.
-
-    Returns:
-        dict: The inserted document ID.
-    """
-
+async def create_user(new_user: User):
     try:
-        existing_user = await get_user_by_id(user.id)
+        existing_user = await get_user_by_id(new_user.id)
         if existing_user:
             raise ValueError("User already exists")
-        user = user.dict()
-        return await database_functions.add_user("users", user)
+        new_user.balance = 0.0
+        user = new_user.dict()
+        return await database_functions.add("users",user)
     except Exception as e:
         raise e
 
