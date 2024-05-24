@@ -44,7 +44,7 @@ async def get_by_id( collection_name,object_id):
 
 
 
-async def add_user(collection_name, document):
+async def add(collection_name, document):
     try:
         result = await my_db[collection_name].insert_one(document)
         return {"inserted_id": str(result.inserted_id)}

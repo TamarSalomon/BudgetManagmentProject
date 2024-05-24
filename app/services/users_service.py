@@ -22,9 +22,7 @@ async def get_user_by_id(user_id):
 
 async def create_user(new_user: User):
     try:
-        existing_user = await get_user_by_id(new_user.id)
-        if existing_user:
-            raise ValueError("User already exists")
+        new_user.id = await last_id() + 1
         new_user.balance = 0.0
         user = new_user.dict()
         return await database_functions.add("users",user)
@@ -49,3 +47,20 @@ async  def login_user(user_name, user_password):
        return  await database_functions.login("users",user_name,user_password)
     except Exception as e:
         raise e
+
+
+
+
+
+async def last_id():
+    try:
+        all_users = await get_all_users()
+        max_id = 0
+        for user in all_users:
+            if user['id'] > max_id:
+                max_id = user['id']
+        return max_id
+    except Exception as e:
+        raise e
+
+
