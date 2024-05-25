@@ -1,6 +1,7 @@
 import uvicorn as uvicorn
 from fastapi import FastAPI
 from app.routes.users_router import user_router
+import bcrypt
 
 
 app = FastAPI()

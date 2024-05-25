@@ -1,4 +1,5 @@
 # app/services/userService.py
+import bcrypt
 from fastapi import HTTPException
 
 
@@ -47,7 +48,11 @@ async def create_user(new_user: User):
            dict: A dictionary containing the result of adding the user.
        """
     try:
-        new_user.id = await last_id() + 1
+        hashed_password = bcrypt.hashpw(new_user.password.encode('utf-8'), bcrypt.gensalt())
+
+        new_user.id = await database_functions.last_id("users") + 1
+        new_user.balance = 0.0
+        new_user.password = hashed_password.decode('utf-8')  # Store the hashed password
         new_user.balance = 0.0
         user = new_user.dict()
         return await database_functions.add("users",user)
@@ -66,10 +71,17 @@ async  def login_user(user_name, user_password):
            list: A list of dictionaries containing user information.
        """
     try:
-       return  await database_functions.login("users",user_name,user_password)
+        all_users = await database_functions.get_all("users")
+        for user in all_users:
+            if user['user_name'] == user_name and bcrypt.checkpw(user_password.encode('utf-8'),
+                                          user['password'].encode('utf-8')):
+                return [user]
+        raise ValueError("User not found or invalid password")
+    except ValueError as ve:
+        raise ve
     except Exception as e:
         raise e
-
+    raise RuntimeError(f"Error during login: {e}")
 
 
 async def update_user(user_id: int, user_update: User):
