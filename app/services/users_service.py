@@ -73,15 +73,14 @@ async  def login_user(user_name, user_password):
     try:
         all_users = await database_functions.get_all("users")
         for user in all_users:
-            if user['user_name'] == user_name and bcrypt.checkpw(user_password.encode('utf-8'),
-                                          user['password'].encode('utf-8')):
+            if user['name'] == user_name and bcrypt.checkpw(user_password.encode('utf-8'),
+                                                                 user['password'].encode('utf-8')):
                 return [user]
         raise ValueError("User not found or invalid password")
     except ValueError as ve:
         raise ve
     except Exception as e:
-        raise e
-    raise RuntimeError(f"Error during login: {e}")
+        raise RuntimeError(f"Error during login: {e}")
 
 
 async def update_user(user_id: int, user_update: User):
@@ -111,15 +110,5 @@ async def update_user(user_id: int, user_update: User):
 
 
 
-async def last_id():
-    try:
-        all_users = await get_all_users()
-        max_id = 0
-        for user in all_users:
-            if user['id'] > max_id:
-                max_id = user['id']
-        return max_id
-    except Exception as e:
-        raise e
 
 

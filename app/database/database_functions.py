@@ -85,7 +85,8 @@ async def login(collection_name, object_name, object_password):
         """
     try:
         all_users = await get_all(collection_name)
-        filtered_users = [user for user in all_users if user['name'] == object_name and user['password'] == object_password]
+        filtered_users = [user for user in all_users if
+                          user['user_name'] == object_name and user['password'] == object_password]
         if not filtered_users:
             raise ValueError("User not found")
         return filtered_users
@@ -117,3 +118,15 @@ async def update(collection_name,object):
     except Exception as e:
         raise RuntimeError(f"Error updating document: {e}")
 
+async def last_id(collection_name):
+    try:
+        all_collection = await get_all(collection_name)
+        if all_collection is None:
+            return -1
+        max_id = 0
+        for item in all_collection:
+            if item['id'] > max_id:
+                max_id = item['id']
+        return max_id
+    except Exception as e:
+        raise e
