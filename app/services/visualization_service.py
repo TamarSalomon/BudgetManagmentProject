@@ -4,10 +4,25 @@ from app.database import database_functions
 import datetime
 
 async def filter_by_current_month(data_df):
+    """
+    Filters the given dataframe to include only the rows from the current month.
+
+    Args:
+        data_df (pd.DataFrame): The dataframe to be filtered.
+
+    Returns:
+        pd.DataFrame: A dataframe containing only the rows from the current month.
+    """
     current_month = datetime.datetime.now().month
     return data_df[data_df['date'].dt.month == current_month]
 
 async def get_dataframes():
+    """
+    Retrieves all users, expenses, and revenues data from the database and returns them as dataframes.
+
+    Returns:
+        tuple: A tuple containing three dataframes: users, expenses, and revenues.
+    """
     try:
         users = await database_functions.get_all("users")
         expenses = await database_functions.get_all("expenses")
@@ -32,8 +47,20 @@ async def get_dataframes():
         print(f"Error in get_dataframes: {e}")
         raise e
 
-
 async def plot_revenue_expense_per_user(user_id):
+    """
+    Plots a bar chart showing the total revenue and total expense for a specific user in the current month.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Raises:
+        ValueError: If the user with the specified ID is not found.
+
+    Returns:
+            None: Displays a bar chart showing total revenue and expense for the specified user.
+
+    """
     try:
         users_df, expenses_df, revenues_df = await get_dataframes()
 
@@ -73,6 +100,16 @@ async def plot_revenue_expense_per_user(user_id):
         raise e
 
 async def plot_pie_chart(user_id):
+    """
+    Plots a pie chart showing the distribution of expenses and revenues for a specific user in the current month.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Returns:
+            None: Displays a pie chart showing the distribution of expenses and revenues for the specified user in the current month.
+
+    """
     try:
         users_df, expenses_df, revenues_df = await get_dataframes()
 
@@ -102,6 +139,16 @@ async def plot_pie_chart(user_id):
         raise e
 
 async def plot_revenue_expense_over_time(user_id):
+    """
+    Plots a line chart showing the total revenue and total expense over time for a specific user.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Returns:
+            None: Displays a line chart showing total revenue and expense over time for the specified user.
+
+    """
     try:
         users_df, expenses_df, revenues_df = await get_dataframes()
 
