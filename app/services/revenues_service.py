@@ -1,7 +1,7 @@
+
 from app.database import database_functions
 from app.models.revenue_model import Revenue
 from datetime import datetime
-from app.services.users_service import update_user
 from app.models.user_model import User
 
 
@@ -20,7 +20,7 @@ async def get_revenue_by_id(revenue_id: int):
         Exception: For any other unexpected error.
     """
     try:
-        revenue = await database_functions.get_by_id(revenue_id, "revenues")
+        revenue = await database_functions.get_by_id("revenues",revenue_id)
         if revenue is None:
             raise ValueError("Revenue not found")
         return revenue
@@ -45,7 +45,7 @@ async def get_all_revenues_by_user_id(user_id: int):
         Exception: For any other unexpected error.
     """
     try:
-        all_revenues = await database_functions.get_all_by_user_id(user_id, "revenues")
+        all_revenues = await database_functions.get_all_by_user_id("revenues",user_id)
         if not all_revenues:
             raise ValueError("Revenues not found")
         return all_revenues
@@ -71,16 +71,17 @@ async def create_revenue(user_id, new_revenue: Revenue):
         Exception: For any other unexpected error.
     """
     try:
-        new_revenue.id = await database_functions.last_id(collection_name="revenues") + 1
+        new_revenue.id = await database_functions.last_id("revenues") + 1
         new_revenue.user_id = user_id
-        user = await database_functions.get_by_id(user_id, "users")
+        user = await database_functions.get_by_id("users",user_id)
         if user is None:
             raise ValueError("User not found")
         user['balance'] += new_revenue.total_revenue
-        await database_functions.update(user, "users")
+        await database_functions.update("users",user)
 
+        # Convert Revenue object to dictionary before adding to database
         new_revenue_dict = new_revenue.dict()
-        return await database_functions.add(new_revenue_dict, "revenues")
+        return await database_functions.add("revenues",new_revenue_dict)
     except ValueError as ve:
         raise ve
     except Exception as e:
@@ -106,22 +107,22 @@ async def update_revenue(revenue_id: int, new_revenue: Revenue):
         last_user_id = existing_revenue['user_id']
         last_total_revenue = existing_revenue['total_revenue']
 
-        user_data = await database_functions.get_by_id(last_user_id, "users")
+        user_data = await database_functions.get_by_id("users", last_user_id)
         user = User(**user_data)
         user.balance -= last_total_revenue
-        await update_user(last_user_id, user, True)
+        await database_functions.update("users", user.dict())
 
-        new_user_data = await database_functions.get_by_id(new_revenue.user_id, "users")
+        new_user_data = await database_functions.get_by_id("users", new_revenue.user_id)
         new_user = User(**new_user_data)
         new_user.balance += new_revenue.total_revenue
-        await update_user(new_revenue.user_id, new_user, True)
+        await database_functions.update("users", new_user.dict())
 
         new_revenue.id = revenue_id
         new_revenue.date = datetime.now()
         updated_revenue = new_revenue.dict()
-        return await database_functions.update(updated_revenue, collection_name="revenues")
+        return await database_functions.update("revenues", updated_revenue)
     except Exception as e:
-        raise e
+        raise RuntimeError(f"Error updating revenue: {e}")
 
 
 async def delete_revenue(revenue_id):
@@ -140,12 +141,17 @@ async def delete_revenue(revenue_id):
     """
     try:
         revenue = await get_revenue_by_id(revenue_id)
-        user_data = await database_functions.get_by_id(revenue['user_id'],"users")
+        if not revenue:
+            raise ValueError(f"Revenue with ID {revenue_id} not found.")
+
+        user_data = await database_functions.get_by_id("users", revenue['user_id'])
         user = User(**user_data)
         user.balance -= revenue['total_revenue']
-        await update_user(revenue['user_id'], user, True)
-        return await database_functions.delete(revenue['id'],"revenues")
+        await database_functions.update("users", user.dict())
+
+        await database_functions.delete("revenues", revenue['id'])
+        return f"Revenue with ID {revenue_id} deleted successfully."
     except ValueError as ve:
         raise ve
     except Exception as e:
-        raise e
+        raise RuntimeError(f"Error deleting revenue: {e}")

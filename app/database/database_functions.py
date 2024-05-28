@@ -124,7 +124,7 @@ async def get_all_by_user_id(collection_name,user_id):
         raise RuntimeError(f"Error retrieving items by user ID: {e}")
 
 
-async def delete( collection_name,document_id):
+async def delete(collection_name,document_id):
     """
     Deletes a document from a specified collection in the database by its ID.
 
