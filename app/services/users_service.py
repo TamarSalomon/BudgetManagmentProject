@@ -1,4 +1,6 @@
 import bcrypt
+
+from app import utils
 from app.database import database_functions
 from app.models.user_model import User
 
@@ -56,7 +58,7 @@ async def create_user(new_user: User):
     try:
         hashed_password = bcrypt.hashpw(new_user.password.encode('utf-8'), bcrypt.gensalt())
 
-        new_user.id = await database_functions.last_id("users") + 1
+        new_user.id = await utils.last_id("users") + 1
         new_user.balance = 0
         new_user.password = hashed_password.decode('utf-8')
 

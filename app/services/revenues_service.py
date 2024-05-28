@@ -1,4 +1,4 @@
-
+from app import utils
 from app.database import database_functions
 from app.models.revenue_model import Revenue
 from datetime import datetime
@@ -71,7 +71,7 @@ async def create_revenue(user_id, new_revenue: Revenue):
         Exception: For any other unexpected error.
     """
     try:
-        new_revenue.id = await database_functions.last_id("revenues") + 1
+        new_revenue.id = await utils.last_id("revenues") + 1
         new_revenue.user_id = user_id
         user = await database_functions.get_by_id("users",user_id)
         if user is None:

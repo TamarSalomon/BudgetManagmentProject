@@ -84,24 +84,7 @@ async def update(collection_name,document):
 
 
 
-async def last_id(collection_name):
-    """
-    Retrieves the last ID from a specified collection in the database.
 
-    Args:
-        collection_name (str): The name of the collection in the database.
-
-    Returns:
-        int: The last ID found in the collection.
-    """
-    try:
-        all_collection = await get_all(collection_name)
-        if not all_collection:
-            return -1
-        max_id = max(item.get('id', 0) for item in all_collection)
-        return max_id
-    except Exception as e:
-        raise RuntimeError(f"Error retrieving last ID: {e}")
 
 
 async def get_all_by_user_id(collection_name,user_id):
