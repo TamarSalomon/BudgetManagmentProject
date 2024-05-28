@@ -83,7 +83,7 @@ async  def login_user(user_name, user_password):
         raise RuntimeError(f"Error during login: {e}")
 
 
-async def update_user(user_id: int, user_update: User):
+async def update_user(user_id: int, user_update: User,update_balance: bool):
     """
       Updates a user's profile.
 

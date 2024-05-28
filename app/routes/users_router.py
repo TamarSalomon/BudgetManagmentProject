@@ -20,7 +20,7 @@ async def get_all_users():
     try:
         users= await users_service.get_all_users()
         if not users:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(status_code=404, detail="No users found")
         return users
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -39,7 +39,7 @@ async def get_user_by_id(user_id: int):
     try:
         return await users_service.get_user_by_id(user_id)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -95,9 +95,10 @@ async def update_user(user_id: int, user_update: User):
             str: A message indicating the success of the update.
         """
     try:
-        return await users_service.update_user(user_id, user_update)
+        return await users_service.update_user(user_id, user_update,False)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 

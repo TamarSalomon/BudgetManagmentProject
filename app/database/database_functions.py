@@ -21,9 +21,10 @@ async def get_all(collection_name):
     try:
         cursor = my_db[collection_name].find({})
         results = await cursor.to_list(length=None)
-        return to_json(results)
         if not results:
           raise ValueError("users not found")
+        return to_json(results)
+
     except ValueError as ve:
         raise ve
     except Exception as e:
@@ -130,3 +131,47 @@ async def last_id(collection_name):
         return max_id
     except Exception as e:
         raise e
+
+
+async def get_all_by_user_id(user_id, collection_name):
+    """
+    Retrieves all items belonging to a specific user ID from a specified collection in the database.
+
+    Args:
+        user_id (any): The ID of the user.
+        collection_name (str): The name of the collection in the database.
+
+    Returns:
+        list: A list containing dictionaries of retrieved items.
+    """
+    try:
+        all_items = await my_db[collection_name].find({"user_id": user_id}).to_list(length=None)
+        for item in all_items:
+            item["_id"] = str(item["_id"])
+        return all_items
+    except Exception as e:
+        raise RuntimeError(f"Error retrieving items by user ID: {e}")
+
+
+async def delete(document_id, collection_name):
+    """
+    Deletes a document from a specified collection in the database by its ID.
+
+    Args:
+        document_id (any): The ID of the document to delete.
+        collection_name (str): The name of the collection in the database.
+
+    Returns:
+        str: A message indicating the success of the deletion.
+
+    Raises:
+        RuntimeError: If there is an error during the deletion process.
+    """
+    try:
+        result = await my_db[collection_name].delete_one({"id": document_id})
+        if result is not None:
+            return f"Document with ID {document_id} deleted successfully."
+        else:
+            return f"No document found with ID {document_id}."
+    except Exception as e:
+        raise RuntimeError(f"Error deleting document: {e}")
