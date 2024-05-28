@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from app.database  import database_functions
+from app.database import database_functions
+import datetime
+
+async def filter_by_current_month(data_df):
+    current_month = datetime.datetime.now().month
+    return data_df[data_df['date'].dt.month == current_month]
+
 async def get_dataframes():
     try:
         users = await database_functions.get_all("users")
@@ -27,7 +33,7 @@ async def get_dataframes():
         raise e
 
 
-async def plot_revenue_expense_per_user():
+async def plot_revenue_expense_per_user(user_id):
     try:
         users_df, expenses_df, revenues_df = await get_dataframes()
 
@@ -40,18 +46,23 @@ async def plot_revenue_expense_per_user():
         df['total_expense'] = df['total_expense'].fillna(0)
         df['total_revenue'] = df['total_revenue'].fillna(0)
 
+        user_df = df[df['id'] == user_id]
+
+        if user_df.empty:
+            raise ValueError(f"User with id {user_id} not found")
+
         plt.figure(figsize=(12, 6))
 
         bar_width = 0.35
-        index = df.index
+        index = user_df.index
 
-        plt.bar(index, df['total_revenue'], bar_width, label='Total Revenue', color='b')
-        plt.bar(index + bar_width, df['total_expense'], bar_width, label='Total Expense', color='r')
+        plt.bar(index, user_df['total_revenue'], bar_width, label='Total Revenue', color='green')
+        plt.bar(index + bar_width, user_df['total_expense'], bar_width, label='Total Expense', color='yellow')
 
         plt.xlabel('User')
         plt.ylabel('Amount')
-        plt.title('Revenue and Expenses per User')
-        plt.xticks(index + bar_width / 2, df['name'])
+        plt.title(f'Revenue and Expenses for User {user_id}')
+        plt.xticks(index + bar_width / 2, user_df['name'])
 
         plt.legend()
         plt.grid(True)
@@ -61,22 +72,50 @@ async def plot_revenue_expense_per_user():
         print(f"Error in plot_revenue_expense_per_user: {e}")
         raise e
 
-
-
-async def plot_revenue_expense_over_time():
+async def plot_pie_chart(user_id):
     try:
         users_df, expenses_df, revenues_df = await get_dataframes()
 
-        df = pd.merge(expenses_df, revenues_df, on='date', how='outer')
+        expenses_df = await filter_by_current_month(expenses_df)
+        revenues_df = await filter_by_current_month(revenues_df)
+
+        user_expenses = expenses_df[expenses_df['user_id'] == user_id]
+        user_revenues = revenues_df[revenues_df['user_id'] == user_id]
+
+        total_expenses = user_expenses['total_expense'].sum()
+        total_revenues = user_revenues['total_revenue'].sum()
+
+        labels = ['Expenses', 'Revenues']
+        sizes = [total_expenses, total_revenues]
+        colors = ['red', 'green']
+        explode = (0.1, 0)  # explode Expenses slice
+
+        plt.figure(figsize=(8, 8))
+        plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
+        plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+        plt.title(f'Expense and Revenue Distribution for User {user_id}')
+
+        plt.show()
+    except Exception as e:
+        print(f"Error in plot_pie_chart: {e}")
+        raise e
+
+async def plot_revenue_expense_over_time(user_id):
+    try:
+        users_df, expenses_df, revenues_df = await get_dataframes()
+
+        user_expenses = expenses_df[expenses_df['user_id'] == user_id]
+        user_revenues = revenues_df[revenues_df['user_id'] == user_id]
 
         plt.figure(figsize=(14, 7))
 
-        plt.plot(df['date'], df['total_expense'], label='Total Expense', color='r')
-        plt.plot(df['date'], df['total_revenue'], label='Total Revenue', color='b')
+        plt.plot(user_expenses['date'], user_expenses['total_expense'], label='Total Expense', color='red')
+        plt.plot(user_revenues['date'], user_revenues['total_revenue'], label='Total Revenue', color='blue')
 
         plt.xlabel('Date')
         plt.ylabel('Amount')
-        plt.title('Revenue and Expense Over Time')
+        plt.title(f'Revenue and Expense Over Time for User {user_id}')
 
         plt.legend()
         plt.grid(True)
@@ -85,45 +124,3 @@ async def plot_revenue_expense_over_time():
     except Exception as e:
         print(f"Error in plot_revenue_expense_over_time: {e}")
         raise e
-
-
-
-
-
-
-
-
-async def plot_financial_management_per_user():
-    try:
-        users_df, expenses_df, revenues_df = await get_dataframes()
-
-        expenses_sum = expenses_df.groupby('user_id')['total_expense'].sum().reset_index()
-        revenues_sum = revenues_df.groupby('user_id')['total_revenue'].sum().reset_index()
-
-        df = pd.merge(users_df, expenses_sum, left_on='id', right_on='user_id', how='left')
-        df = pd.merge(df, revenues_sum, left_on='id', right_on='user_id', how='left')
-
-        df['total_expense'] = df['total_expense'].fillna(0)
-        df['total_revenue'] = df['total_revenue'].fillna(0)
-        df['financial_management'] = df['total_revenue'] - df['total_expense']
-
-        plt.figure(figsize=(14, 7))
-
-        bar_width = 0.3
-        index = df.index
-
-        plt.bar(index, df['total_revenue'], bar_width, label='Total Revenue', color='b')
-        plt.bar(index + bar_width, df['total_expense'], bar_width, label='Total Expense', color='r')
-        plt.bar(index + 2 * bar_width, df['financial_management'], bar_width, label='Financial Management', color='g')
-
-        plt.xlabel('User')
-        plt.ylabel('Amount')
-        plt.title('Financial Management per User')
-        plt.xticks(index + bar_width, df['name'], rotation=45)
-
-        plt.legend()
-        plt.grid(True)
-
-        plt.show()
-    except Exception as e:
-        print(f"Error in plot_financial_management_per_user")
