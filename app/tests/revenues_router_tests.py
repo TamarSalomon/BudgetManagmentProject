@@ -53,3 +53,18 @@ async def test_add_revenue():
     assert result is not None
     assert "inserted_id" in result
     assert isinstance(result, dict)
+
+
+@pytest.mark.asyncio
+async def test_delete_revenue():
+    """
+    Test to delete an revenue by its ID.
+
+    Deletes an revenue by its ID and checks if the returned result is not None, is a string,
+    and contains the success message 'deleted successfully'.
+    """
+    revenue_id = 22
+    result = await revenues_router.delete_revenue(revenue_id)
+    assert result is not None
+    assert isinstance(result, str)
+    assert "deleted successfully" in result

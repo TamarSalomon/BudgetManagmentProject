@@ -53,3 +53,18 @@ async def test_add_expense():
     assert result is not None
     assert "inserted_id" in result
     assert isinstance(result, dict)
+
+
+@pytest.mark.asyncio
+async def test_delete_expense():
+    """
+    Test to delete an expense by its ID.
+
+    Deletes an expense by its ID and checks if the returned result is not None, is a string,
+    and contains the success message 'deleted successfully'.
+    """
+    expense_id = 4
+    result = await expenses_router.delete_expense(expense_id)
+    assert result is not None
+    assert isinstance(result, str)
+    assert "deleted successfully" in result
