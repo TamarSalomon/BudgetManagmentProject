@@ -128,7 +128,7 @@ async def login_user(user_name, user_password):
             user_name (str): The username of the user.
             user_password (str): The password of the user.
         Returns:
-            List[User]: A list containing the authenticated user.
+            User:user containing the authenticated user.
         Raises:
             ValueError: If the user is not found or the password is invalid.
             Exception: For any unexpected errors during login.

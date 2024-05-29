@@ -124,7 +124,7 @@ async def login_user(user_name: str, user_password: str):
            user_password (str): The password of the user.
 
        Returns:
-           List[User]: The authenticated user object.
+            User:user containing the authenticated user.
 
        Raises:
            HTTPException: If the user is not found or the password is invalid (400) or any server error occurs (500).
