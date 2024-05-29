@@ -71,8 +71,7 @@ To get started with BudgetManagment:
    ```sh
    python main.py
 
-
-   
+***The project file tree:***
 BudgetManagment
 ├── APP
 │   ├── database
@@ -101,6 +100,7 @@ BudgetManagment
 │   └── utils.py
 ├── README.md
 └── requirements.txt
+
 
 
 
