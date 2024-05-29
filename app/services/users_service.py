@@ -55,7 +55,7 @@ async def create_user(new_user: User):
        Args:
            new_user (User): The user object containing user details.
        Returns:
-           User: The newly created user.
+          dict: A dictionary containing the inserted ID as a string.
        Raises:
            Exception: For any unexpected errors during user creation.
        """
@@ -79,7 +79,7 @@ async def update_user(user_id: int, new_user: User):
          user_id (int): The ID of the user to update.
          new_user (User): The user object containing the updated details.
      Returns:
-         User: The updated user object.
+          str: Success message indicating the user was updated.
      Raises:
          Exception: For any unexpected errors during user update.
      """
@@ -90,7 +90,7 @@ async def update_user(user_id: int, new_user: User):
         new_user.password = hashed_password.decode('utf-8')
         new_user.id = user_id
         user = new_user.dict()
-        return await database_functions.update( "users",user)
+        return await database_functions.update("users",user)
     except Exception as e:
         raise e
 

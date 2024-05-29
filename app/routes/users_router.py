@@ -56,7 +56,7 @@ async def add_user(new_user: User):
         new_user (User): The user object to be created.
 
     Returns:
-        User: The newly created user object.
+     dict: A dictionary containing the inserted ID as a string.
 
     Raises:
         HTTPException: If any server error occurs (500).
@@ -68,8 +68,8 @@ async def add_user(new_user: User):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-    @user_router.put('/{user_id}')
-    async def update_user(user_id: int, new_user: User):
+@user_router.put('/{user_id}')
+async def update_user(user_id: int, new_user: User):
 
         """
           Update an existing user.
@@ -79,7 +79,7 @@ async def add_user(new_user: User):
               new_user (User): The updated user object.
 
           Returns:
-              User: The updated user object.
+            str: A success message indicating the user was updated.
 
           Raises:
               HTTPException: If any server error occurs (500).
@@ -100,7 +100,7 @@ async def delete_user(user_id: int):
            user_id (int): The ID of the user to delete.
 
        Returns:
-           User: The deleted user object.
+            str: A success message indicating the user was deleted.
 
        Raises:
            HTTPException: If the user is not found (400) or any server error occurs (500).

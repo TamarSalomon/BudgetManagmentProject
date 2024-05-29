@@ -52,7 +52,7 @@ async def get_revenue_by_id(revenue_id: int):
 
 
 @revenue_router.post('/create_revenue_to_user/{user_id}')
-async def create_revenue(user_id: int, new_revenue: Revenue):
+async def add_revenue(user_id: int, new_revenue: Revenue):
     """
        Create a new revenue for a specific user.
 
@@ -61,7 +61,8 @@ async def create_revenue(user_id: int, new_revenue: Revenue):
            new_revenue (Revenue): The revenue object to be created.
 
        Returns:
-           Revenue: The newly created revenue object.
+           dict: A dictionary containing the inserted ID as a string.
+
 
        Raises:
            HTTPException: If any server error occurs (500).
@@ -84,7 +85,7 @@ async def update_revenue(revenue_id: int, new_revenue: Revenue):
            new_revenue (Revenue): The updated revenue object.
 
        Returns:
-           Revenue: The updated revenue object.
+           str: A success message indicating the revenue was updated.
 
        Raises:
            HTTPException: If any server error occurs (500).

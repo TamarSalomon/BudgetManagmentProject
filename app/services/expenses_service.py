@@ -59,7 +59,7 @@ async def create_expense(user_id, new_expense: Expense):
             user_id (int): The ID of the user.
             new_expense (Expense): The expense object containing expense details.
         Returns:
-            Expense: The newly created expense.
+          dict: A dictionary containing the inserted ID as a string.
         Raises:
             ValueError: If the user is not found.
             Exception: For any unexpected errors during expense creation.
@@ -69,7 +69,7 @@ async def create_expense(user_id, new_expense: Expense):
         new_expense.user_id = user_id
         user = await database_functions.get_by_id("users",user_id)
         if user is None:
-            raise ValueError("User not found")
+            raise ValueError("Expense not found")
         user['balance'] -= new_expense.total_expense
         await database_functions.update("users",user)
 
@@ -88,7 +88,7 @@ async def update_expense(expense_id: int, new_expense: Expense):
            expense_id (int): The ID of the expense to update.
            new_expense (Expense): The expense object containing updated details.
        Returns:
-           Expense: The updated expense object.
+          str: Success message indicating the expense was updated.
        Raises:
            Exception: For any unexpected errors during expense update.
        """
@@ -118,15 +118,15 @@ async def update_expense(expense_id: int, new_expense: Expense):
 
 async def delete_expense(expense_id):
     """
-      Delete an expense entry and update the user's balance accordingly.
-      Args:
-          expense_id (int): The ID of the expense to delete.
-      Returns:
-          str: Success message indicating the expense was deleted.
-      Raises:
-          ValueError: If the expense is not found.
-          Exception: For any other unexpected errors.
-      """
+    Delete an expense entry and update the user's balance accordingly.
+    Args:
+        expense_id (int): The ID of the expense to delete.
+    Returns:
+        str: Success message indicating the expense was deleted.
+    Raises:
+        ValueError: If the expense is not found.
+        Exception: For any other unexpected errors.
+    """
     try:
         expense = await get_expense_by_id(expense_id)
         if not expense:
@@ -143,3 +143,4 @@ async def delete_expense(expense_id):
         raise ve
     except Exception as e:
         raise e
+

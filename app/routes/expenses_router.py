@@ -53,7 +53,7 @@ async def get_expense_by_id(expense_id: int):
 
 
 @expense_router.post('/create_expense_to_user/{user_id}')
-async def create_expense(user_id: int, new_expense: Expense):
+async def add_expense(user_id: int, new_expense: Expense):
     """
         Create a new expense for a specific user.
 
@@ -62,7 +62,7 @@ async def create_expense(user_id: int, new_expense: Expense):
             new_expense (Expense): The expense object to be created.
 
         Returns:
-            Expense: The newly created expense object.
+          dict: A dictionary containing the inserted ID as a string.
 
         Raises:
             HTTPException: If any server error occurs (500).
@@ -85,7 +85,7 @@ async def update_expense(expense_id: int, new_expense: Expense):
          new_expense (Expense): The updated expense object.
 
      Returns:
-         Expense: The updated expense object.
+           str: A success message indicating the expense was updated.
 
      Raises:
          HTTPException: If any server error occurs (500).
@@ -99,7 +99,7 @@ async def update_expense(expense_id: int, new_expense: Expense):
 
 
 @expense_router.delete('/delete_expense/{expense_id}')
-async def delete_revenue(expense_id: int):
+async def delete_expense(expense_id: int):
     """
        Delete an expense by its ID.
 

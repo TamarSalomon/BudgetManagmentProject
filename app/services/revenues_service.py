@@ -57,7 +57,7 @@ async def create_revenue(user_id, new_revenue: Revenue):
             user_id (int): The ID of the user.
             new_revenue (Revenue): The revenue object containing revenue details.
         Returns:
-            Revenue: The newly created revenue.
+          dict: A dictionary containing the inserted ID as a string.
         Raises:
             ValueError: If the user is not found.
             Exception: For any unexpected errors during revenue creation.
@@ -87,7 +87,7 @@ async def update_revenue(revenue_id: int, new_revenue: Revenue):
           revenue_id (int): The ID of the revenue to update.
           new_revenue (Revenue): The revenue object containing updated details.
       Returns:
-          Revenue: The updated revenue object.
+           str: Success message indicating the revenue was updated.
       Raises:
           Exception: For any unexpected errors during revenue update.
       """
