@@ -5,18 +5,21 @@ from app.database import database_functions
 from app.models.user_model import User
 
 
+
+
 async def get_all_users():
     """
-    Retrieves all users.
-
-    Returns:
-        list: A list containing dictionaries of user information.
-    """
+       Retrieve all users from the database.
+       Returns:
+           List[User]: A list of all users.
+       Raises:
+           ValueError: If no users are found.
+           Exception: For any other unexpected errors.
+       """
     try:
         users = await database_functions.get_all("users")
-        print(users)
         if users is None:
-            return ValueError('List users not found')
+            return ValueError('No users found')
         return users
     except ValueError as ve:
         raise ve
@@ -26,14 +29,15 @@ async def get_all_users():
 
 async def get_user_by_id(user_id):
     """
-    Retrieves a user by their ID.
-
-    Args:
-        user_id (int): The ID of the user to retrieve.
-
-    Returns:
-        dict: A dictionary containing the user's information.
-    """
+       Retrieve a user by their ID.
+       Args:
+           user_id (int): The ID of the user to retrieve.
+       Returns:
+           User: The user object if found.
+       Raises:
+           ValueError: If the user is not found.
+           Exception: For any other unexpected errors.
+       """
     try:
         user = await database_functions.get_by_id("users",user_id)
         if user is None:
@@ -47,65 +51,38 @@ async def get_user_by_id(user_id):
 
 async def create_user(new_user: User):
     """
-    Creates a new user.
-
-    Args:
-        new_user (User): The user object to be created.
-
-    Returns:
-        dict: A dictionary containing the result of adding the user.
-    """
+       Create a new user in the database.
+       Args:
+           new_user (User): The user object containing user details.
+       Returns:
+           User: The newly created user.
+       Raises:
+           Exception: For any unexpected errors during user creation.
+       """
     try:
-        hashed_password = bcrypt.hashpw(new_user.password.encode('utf-8'), bcrypt.gensalt())
-
         new_user.id = await utils.last_id("users") + 1
         new_user.balance = 0
+        hashed_password = bcrypt.hashpw(new_user.password.encode('utf-8'), bcrypt.gensalt())
         new_user.password = hashed_password.decode('utf-8')
-
         user = new_user.dict()
         return await database_functions.add("users",user)
     except Exception as e:
         raise e
 
 
-async def login_user(user_name, user_password):
-    """
-    Logs in a user.
-
-    Args:
-        user_name (str): The username of the user.
-        user_password (str): The password of the user.
-
-    Returns:
-        list: A list of dictionaries containing user information.
-    """
-    try:
-        all_users = await database_functions.get_all("users")
-        if not all_users:
-            return ValueError('List users not found')
-        for user in all_users:
-            if user['name'] == user_name and bcrypt.checkpw(user_password.encode('utf-8'), user['password'].encode('utf-8')):
-                return [user]
-        raise ValueError("User not found or invalid password")
-    except ValueError as ve:
-        raise ve
-    except Exception as e:
-        raise RuntimeError(f"Error during login: {e}")
 
 
 async def update_user(user_id: int, new_user: User):
     """
-    Updates a user's profile.
-
-    Args:
-        user_id (int): The ID of the user to update.
-        new_user (User): The updated user object.
-
-    Returns:
-        str: A message indicating the success of the update.
-        :param user_id:
-        :param new_user:
-    """
+     Update an existing user's details.
+     Args:
+         user_id (int): The ID of the user to update.
+         new_user (User): The user object containing the updated details.
+     Returns:
+         User: The updated user object.
+     Raises:
+         Exception: For any unexpected errors during user update.
+     """
     try:
         existing_user = await get_user_by_id(user_id)
         new_user.balance = existing_user['balance']
@@ -120,14 +97,15 @@ async def update_user(user_id: int, new_user: User):
 
 async def delete_user(user_id):
     """
-    Deletes a user from the system along with their associated revenues.
-
-    Args:
-        user_id (any): The ID of the user to be deleted.
-
-    Returns:
-        dict: A dictionary containing the result of deleting the user.
-    """
+      Delete a user and their associated revenues and expenses.
+      Args:
+          user_id (int): The ID of the user to delete.
+      Returns:
+          str: Success message indicating the user was deleted.
+      Raises:
+          ValueError: If the user is not found.
+          Exception: For any other unexpected errors.
+      """
     try:
         await get_user_by_id(user_id)
         revenues_user = await database_functions.get_all_by_user_id("revenues",user_id)
@@ -141,3 +119,29 @@ async def delete_user(user_id):
         raise ve
     except Exception as e:
         raise e
+
+
+async def login_user(user_name, user_password):
+    """
+        Authenticate a user based on their username and password.
+        Args:
+            user_name (str): The username of the user.
+            user_password (str): The password of the user.
+        Returns:
+            List[User]: A list containing the authenticated user.
+        Raises:
+            ValueError: If the user is not found or the password is invalid.
+            Exception: For any unexpected errors during login.
+        """
+    try:
+        all_users = await database_functions.get_all("users")
+        if not all_users:
+            raise ValueError('List users not found')
+        for user in all_users:
+            if user['name'] == user_name and bcrypt.checkpw(user_password.encode('utf-8'), user['password'].encode('utf-8')):
+                return [user]
+        raise ValueError("User not found or invalid password")
+    except ValueError as ve:
+        raise ve
+    except Exception as e:
+        raise RuntimeError(f"Error during login: {e}")

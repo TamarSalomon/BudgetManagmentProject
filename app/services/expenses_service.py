@@ -6,7 +6,41 @@ from app.models.user_model import User
 from app import utils
 
 
+
+
+async def get_all_expenses_by_user_id(user_id: int):
+    """
+        Retrieve all expenses for a specific user.
+        Args:
+            user_id (int): The ID of the user.
+        Returns:
+            List[Expense]: A list of expenses for the user.
+        Raises:
+            ValueError: If no expenses are found for the user.
+            Exception: For any other unexpected errors.
+        """
+    try:
+        all_expenses = await database_functions.get_all_by_user_id("expenses",user_id)
+        if not all_expenses :
+            raise ValueError("Expenses not found")
+        return all_expenses
+    except ValueError as ve:
+        raise ve
+    except Exception as e:
+        raise e
+
+
 async def get_expense_by_id(expense_id: int):
+    """
+       Retrieve an expense by its ID.
+       Args:
+           expense_id (int): The ID of the expense to retrieve.
+       Returns:
+           Expense: The expense object if found.
+       Raises:
+           ValueError: If the expense is not found.
+           Exception: For any other unexpected errors.
+       """
     try:
         expense = await database_functions.get_by_id("expenses",expense_id)
         if expense is None:
@@ -18,19 +52,18 @@ async def get_expense_by_id(expense_id: int):
         raise e
 
 
-async def get_all_expenses_by_user_id(user_id: int):
-    try:
-        all_revenues = await database_functions.get_all_by_user_id("expenses",user_id)
-        if not all_revenues :
-            raise ValueError("Expenses not found")
-        return all_revenues
-    except ValueError as ve:
-        raise ve
-    except Exception as e:
-        raise e
-
-
 async def create_expense(user_id, new_expense: Expense):
+    """
+        Create a new expense entry for a user.
+        Args:
+            user_id (int): The ID of the user.
+            new_expense (Expense): The expense object containing expense details.
+        Returns:
+            Expense: The newly created expense.
+        Raises:
+            ValueError: If the user is not found.
+            Exception: For any unexpected errors during expense creation.
+        """
     try:
         new_expense.id = await utils.last_id("expenses") + 1
         new_expense.user_id = user_id
@@ -49,6 +82,16 @@ async def create_expense(user_id, new_expense: Expense):
 
 
 async def update_expense(expense_id: int, new_expense: Expense):
+    """
+       Update an existing expense entry.
+       Args:
+           expense_id (int): The ID of the expense to update.
+           new_expense (Expense): The expense object containing updated details.
+       Returns:
+           Expense: The updated expense object.
+       Raises:
+           Exception: For any unexpected errors during expense update.
+       """
     try:
         existing_expense = await get_expense_by_id(expense_id)
         last_user_id = existing_expense['user_id']
@@ -69,10 +112,21 @@ async def update_expense(expense_id: int, new_expense: Expense):
         updated_revenue = new_expense.dict()
         return await database_functions.update("expenses", updated_revenue)
     except Exception as e:
-        raise RuntimeError(f"Error updating expense: {e}")
+            raise e
+
 
 
 async def delete_expense(expense_id):
+    """
+      Delete an expense entry and update the user's balance accordingly.
+      Args:
+          expense_id (int): The ID of the expense to delete.
+      Returns:
+          str: Success message indicating the expense was deleted.
+      Raises:
+          ValueError: If the expense is not found.
+          Exception: For any other unexpected errors.
+      """
     try:
         expense = await get_expense_by_id(expense_id)
         if not expense:
@@ -88,4 +142,4 @@ async def delete_expense(expense_id):
     except ValueError as ve:
         raise ve
     except Exception as e:
-        raise RuntimeError(f"Error deleting expense: {e}")
+        raise e

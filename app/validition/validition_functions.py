@@ -1,104 +1,87 @@
-from fastapi import HTTPException
-from app.models.user_model import User
-from app.database.database_functions import get_by_id, get_all
 import re
-from app.database import database_functions
 
-def is_valid_id(id: str) -> bool:
-    """
-       Validate if the string is a valid integer ID.
-       Args:
-           id (str): The ID to validate.
-       Returns:
-           bool: True if the ID is valid, False otherwise.
-       Raises:
-           HTTPException: If the ID is not in the correct format.
-       """
-    if not re.match(r'^\d+$', id):
-        raise HTTPException(status_code=400, detail='Invalid ID format. Must contain only digits.')
-    return True
+
 
 def is_valid_name(name: str) :
     """
-        Validate if the string is a valid name.
-        Args:
-            name (str): The name to validate.
-        Returns:
-            bool: True if the name is valid, False otherwise.
-        Raises:
-            HTTPException: If the name is not in the correct format.
-        """
+      Validate if the string is a valid name consisting of only alphabetic characters.
+      Args:
+          name (str): The name to validate.
+      Returns:
+          str: The validated name.
+      Raises:
+          ValueError: If the name is not in the correct format.
+      """
     if re.match(r'^[a-zA-Z]+$', name):
-        return True
+        return name
     else:
-        raise HTTPException(status_code=400, detail='Invalid name format')
+        raise ValueError('Invalid name format')
 
 
 
 def is_valid_password(password: str):
     """
-    Validate if the string is a valid password.
-    Args:
-        password (str): The password to validate.
-    Returns:
-        bool: True if the password is valid, False otherwise.
-    Raises:
-        HTTPException: If the password is not in the correct format.
-    """
+       Validate if the string is a valid password.
+       Args:
+           password (str): The password to validate.
+       Returns:
+           str: The validated password.
+       Raises:
+           ValueError: If the password is not in the correct format.
+       """
     if len(password) < 8:
-        raise HTTPException(status_code=400, detail='Password must be at least 8 characters long')
+        raise ValueError('Password must be at least 8 characters long')
     if not re.search(r'[A-Z]', password):
-        raise HTTPException(status_code=400, detail='Password must contain at least one uppercase letter')
+        raise ValueError('Password must contain at least one uppercase letter')
     if not re.search(r'[a-z]', password):
-        raise HTTPException(status_code=400, detail='Password must contain at least one lowercase letter')
+        raise ValueError(status_code=400, detail='Password must contain at least one lowercase letter')
     if not re.search(r'[0-9]', password):
-        raise HTTPException(status_code=400, detail='Password must contain at least one digit')
-    return True
+        raise ValueError(status_code=400, detail='Password must contain at least one digit')
+    return password
 
 def is_valid_email(email: str) :
     """
-      Validate if the string is a valid email address.
-      Args:
-          email (str): The email address to validate.
-      Returns:
-          bool: True if the email address is valid, False otherwise.
-      Raises:
-          HTTPException: If the email address is not in the correct format.
-      """
+       Validate if the string is a valid email address.
+       Args:
+           email (str): The email address to validate.
+       Returns:
+           str: The validated email address.
+       Raises:
+           ValueError: If the email address is not in the correct format.
+       """
+
     if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
-        raise HTTPException(status_code=400, detail='Invalid email address format')
-    return True
+        raise ValueError('Invalid email address format')
+    return email
 
 def is_valid_phone(phone: str) :
     """
-    Validate if the string is a valid Israeli phone number (landline or mobile).
-    Args:
-        phone (str): The Israeli phone number to validate.
-    Returns:
-        bool: True if the phone number is valid, False otherwise.
-    Raises:
-        HTTPException: If the phone number is not in the correct format.
-    """
-    if len(phone) < 9 or len(phone) > 10:
-        raise HTTPException(status_code=400, detail='Phone number must be 9 or 10 digits long')
-    return True
-
-
-
-async def is_valid_expense(user_id: int, expense: int) -> bool:
-    """
-       Validate if the expense is valid for the given user.
+       Validate if the string is a valid phone number.
        Args:
-           user_id (int): The ID of the user.
-           expense (int): The expense amount.
+           phone (str): The phone number to validate.
        Returns:
-           bool: True if the expense is valid, False otherwise.
+           str: The validated phone number.
        Raises:
-           HTTPException: If the user does not have enough balance.
+           ValueError: If the phone number is not in the correct format.
        """
-    user = await database_functions.get_by_id("users", user_id)
-    if user is not None:
-        if expense > user['balance']:
-            raise HTTPException(status_code=400, detail='Not Enough Money')
-    return True
+    if len(phone) < 9 or len(phone) > 10:
+        raise ValueError('Phone number must be 9 or 10 digits long')
+    return phone
+
+def is_valid_amount(amount: float) :
+    """
+    Validate if the amount is a positive number.
+    Args:
+        amount (float): The amount to validate.
+    Returns:
+        float: The validated amount.
+    Raises:
+        ValueError: If the amount is not positive.
+    """
+    if amount <= 0:
+        raise ValueError('Amount must be a positive number')
+    return amount
+
+
+
 

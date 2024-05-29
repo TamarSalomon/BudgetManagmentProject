@@ -4,46 +4,17 @@ from app.models.revenue_model import Revenue
 from datetime import datetime
 from app.models.user_model import User
 
-
-async def get_revenue_by_id(revenue_id: int):
-    """
-    Retrieves revenue details by its ID.
-
-    Args:
-        revenue_id (int): The ID of the revenue to retrieve.
-
-    Returns:
-        dict: A dictionary containing the revenue details.
-
-    Raises:
-        ValueError: If the revenue is not found.
-        Exception: For any other unexpected error.
-    """
-    try:
-        revenue = await database_functions.get_by_id("revenues",revenue_id)
-        if revenue is None:
-            raise ValueError("Revenue not found")
-        return revenue
-    except ValueError as ve:
-        raise ve
-    except Exception as e:
-        raise e
-
-
 async def get_all_revenues_by_user_id(user_id: int):
     """
-    Retrieves all revenues for a specific user by their ID.
-
-    Args:
-        user_id (int): The ID of the user.
-
-    Returns:
-        List[dict]: A list containing dictionaries of revenue details.
-
-    Raises:
-        ValueError: If no revenues are found for the user.
-        Exception: For any other unexpected error.
-    """
+       Retrieve all revenues for a specific user.
+       Args:
+           user_id (int): The ID of the user.
+       Returns:
+           List[Revenue]: A list of revenues for the user.
+       Raises:
+           ValueError: If no revenues are found for the user.
+           Exception: For any other unexpected errors.
+       """
     try:
         all_revenues = await database_functions.get_all_by_user_id("revenues",user_id)
         if not all_revenues:
@@ -55,21 +26,42 @@ async def get_all_revenues_by_user_id(user_id: int):
         raise e
 
 
+async def get_revenue_by_id(revenue_id: int):
+    """
+        Retrieve a revenue by its ID.
+        Args:
+            revenue_id (int): The ID of the revenue to retrieve.
+        Returns:
+            Revenue: The revenue object if found.
+        Raises:
+            ValueError: If the revenue is not found.
+            Exception: For any other unexpected errors.
+        """
+    try:
+        revenue = await database_functions.get_by_id("revenues",revenue_id)
+        if revenue is None:
+            raise ValueError("Revenue not found")
+        return revenue
+    except ValueError as ve:
+        raise ve
+    except Exception as e:
+        raise e
+
+
+
+
 async def create_revenue(user_id, new_revenue: Revenue):
     """
-    Creates a new revenue for a specific user.
-
-    Args:
-        user_id (int): The ID of the user.
-        new_revenue (Revenue): The revenue details.
-
-    Returns:
-        str: A message indicating the success of the operation.
-
-    Raises:
-        ValueError: If the user is not found.
-        Exception: For any other unexpected error.
-    """
+        Create a new revenue entry for a user.
+        Args:
+            user_id (int): The ID of the user.
+            new_revenue (Revenue): The revenue object containing revenue details.
+        Returns:
+            Revenue: The newly created revenue.
+        Raises:
+            ValueError: If the user is not found.
+            Exception: For any unexpected errors during revenue creation.
+        """
     try:
         new_revenue.id = await utils.last_id("revenues") + 1
         new_revenue.user_id = user_id
@@ -90,18 +82,15 @@ async def create_revenue(user_id, new_revenue: Revenue):
 
 async def update_revenue(revenue_id: int, new_revenue: Revenue):
     """
-    Updates an existing revenue.
-
-    Args:
-        revenue_id (int): The ID of the revenue to update.
-        new_revenue (Revenue): The updated revenue details.
-
-    Returns:
-        str: A message indicating the success of the update.
-
-    Raises:
-        Exception: For any unexpected error.
-    """
+      Update an existing revenue entry.
+      Args:
+          revenue_id (int): The ID of the revenue to update.
+          new_revenue (Revenue): The revenue object containing updated details.
+      Returns:
+          Revenue: The updated revenue object.
+      Raises:
+          Exception: For any unexpected errors during revenue update.
+      """
     try:
         existing_revenue = await get_revenue_by_id(revenue_id)
         last_user_id = existing_revenue['user_id']
@@ -122,23 +111,20 @@ async def update_revenue(revenue_id: int, new_revenue: Revenue):
         updated_revenue = new_revenue.dict()
         return await database_functions.update("revenues", updated_revenue)
     except Exception as e:
-        raise RuntimeError(f"Error updating revenue: {e}")
+        raise e
 
 
 async def delete_revenue(revenue_id):
     """
-    Deletes an existing revenue.
-
-    Args:
-        revenue_id (int): The ID of the revenue to delete.
-
-    Returns:
-        str: A message indicating the success of the deletion.
-
-    Raises:
-        ValueError: If the revenue is not found.
-        Exception: For any other unexpected error.
-    """
+       Delete a revenue entry and update the user's balance accordingly.
+       Args:
+           revenue_id (int): The ID of the revenue to delete.
+       Returns:
+           str: Success message indicating the revenue was deleted.
+       Raises:
+           ValueError: If the revenue is not found.
+           Exception: For any other unexpected errors.
+       """
     try:
         revenue = await get_revenue_by_id(revenue_id)
         if not revenue:
@@ -154,4 +140,4 @@ async def delete_revenue(revenue_id):
     except ValueError as ve:
         raise ve
     except Exception as e:
-        raise RuntimeError(f"Error deleting revenue: {e}")
+        raise e

@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+
+from app.validition import validition_functions
 
 
 class Expense(BaseModel):
@@ -8,3 +10,7 @@ class Expense(BaseModel):
     user_id: int
     total_expense: float
     date: datetime
+
+    @validator('total_expense')
+    def validate_total_expense(cls, v):
+        return validition_functions.is_valid_amount(v)
