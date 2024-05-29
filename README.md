@@ -72,34 +72,12 @@ To get started with BudgetManagment:
    python main.py
 
 
-**The project file tree:**
-├── README.md
-├── APP
-│   ├── database
-│   │   ├── database_connection.py
-│   │   └── database_functions.py
-│   ├── models
-│   │   ├── expense_model.py
-│   │   ├── revenue_model.py
-│   │   └── user_model.py
-│   ├── routes
-│   │   ├── expenses_router.py
-│   │   ├── revenues_router.py
-│   │   ├── users_router.py
-│   │   └── visualization_router.py
-│   ├── services
-│   │   ├── expenses_service.py
-│   │   ├── revenues_service.py
-│   │   ├── users_service.py
-│   │   └── visualization_service.py
-│   ├── tests
-│   │   ├── .pytest_cache
-│   │   ├── expenses_router_tests.py
-│   │   ├── revenues_router_tests.py
-│   │   ├── users_router_tests.py
-│   │   └── visualization_router_tests.py
-│   ├── validition
-│   │   └── validition_functions.py
-│   ├── main.py
-│   └── utils.py
-├── requirements.txt
+### Support and Contributions
+  If you encounter any issues or wish to contribute to the development of the project, please open an issue in our repository.
+
+  Thank you for using our Expense and Revenue Management System! We hope it helps you manage your finances effectively. Feel free to reach out for any assistance or feedback.
+
+  Happy budgeting! 📊💰
+
+
+
