@@ -61,3 +61,21 @@ To get started with BudgetManagment:
 1. **Clone the repository:**
    ```sh
    git clone https://github.com/TamarSalomon/BudgetManagmentProject.git
+2. **Install dependencies:**
+```sh
+pip install -r requirements.txt
+3. **Run the application:**
+```sh
+python main.py
+
+Support and Contributions
+If you encounter any issues or wish to contribute to the development of the project, please open an issue in our repository.
+
+Thank you for using our Expense and Revenue Management System! We hope it helps you manage your finances effectively. Feel free to reach out for any assistance or feedback.
+
+Happy budgeting! 📊💰
+
+arduino
+Copy code
+
+You can copy and paste this text directly into your README file.
