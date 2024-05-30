@@ -96,20 +96,20 @@ async def update_revenue(revenue_id: int, new_revenue: Revenue):
         last_user_id = existing_revenue['user_id']
         last_total_revenue = existing_revenue['total_revenue']
 
-        user_data = await database_functions.get_by_id("users", last_user_id)
+        user_data = await database_functions.get_by_id("users",last_user_id)
         user = User(**user_data)
         user.balance -= last_total_revenue
-        await database_functions.update("users", user.dict())
+        await database_functions.update( "users",user.dict())
 
-        new_user_data = await database_functions.get_by_id("users", new_revenue.user_id)
+        new_user_data = await database_functions.get_by_id( "users",new_revenue.user_id)
         new_user = User(**new_user_data)
         new_user.balance += new_revenue.total_revenue
-        await database_functions.update("users", new_user.dict())
+        await database_functions.update("users",new_user.dict())
 
         new_revenue.id = revenue_id
         new_revenue.date = datetime.now()
         updated_revenue = new_revenue.dict()
-        return await database_functions.update("revenues", updated_revenue)
+        return await database_functions.update("revenues",updated_revenue)
     except Exception as e:
         raise e
 

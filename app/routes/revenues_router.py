@@ -1,10 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from app.models.revenue_model import Revenue
 from app.services import revenues_service
+from app.utils import log_function_call
 
 revenue_router = APIRouter()
 
+
 @revenue_router.get('/user/{user_id}')
+@log_function_call
 async def get_all_revenues_by_user_id(user_id: int):
     """
       Retrieve all revenues for a specific user.
@@ -27,6 +30,7 @@ async def get_all_revenues_by_user_id(user_id: int):
 
 
 @revenue_router.get('/{revenue_id}')
+@log_function_call
 async def get_revenue_by_id(revenue_id: int):
     """
       Retrieve a revenue by ID.
@@ -48,10 +52,8 @@ async def get_revenue_by_id(revenue_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-
-
 @revenue_router.post('/create_revenue_to_user/{user_id}')
+@log_function_call
 async def add_revenue(user_id: int, new_revenue: Revenue):
     """
        Create a new revenue for a specific user.
@@ -76,6 +78,7 @@ async def add_revenue(user_id: int, new_revenue: Revenue):
 
 
 @revenue_router.put('/update_revenue/{revenue_id}')
+@log_function_call
 async def update_revenue(revenue_id: int, new_revenue: Revenue):
     """
        Update an existing revenue.
@@ -99,6 +102,7 @@ async def update_revenue(revenue_id: int, new_revenue: Revenue):
 
 
 @revenue_router.delete('/delete_revenue/{revenue_id}')
+@log_function_call
 async def delete_revenue(revenue_id: int):
     """
        Delete a revenue by its ID.

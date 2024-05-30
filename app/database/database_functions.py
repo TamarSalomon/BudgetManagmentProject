@@ -20,7 +20,6 @@ async def get_all(collection_name):
         raise RuntimeError(f"Error retrieving documents from collection {collection_name}: {e}")
 
 
-
 async def get_by_id(collection_name, object_id):
     """
     Retrieves a document by its ID from the specified collection.
@@ -61,6 +60,7 @@ async def get_all_by_user_id(collection_name, user_id):
     except Exception as e:
         raise RuntimeError(f"Error retrieving items by user ID: {e}")
 
+
 async def add(collection_name, object):
     """
     Adds a new document to the specified collection.
@@ -100,8 +100,6 @@ async def update(collection_name, object):
             raise ValueError(f"No document found with ID {object['id']}.")
     except Exception as e:
         raise RuntimeError(f"Error updating document: {e}")
-
-
 
 
 async def delete(collection_name, object_id):

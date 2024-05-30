@@ -1,10 +1,7 @@
 import bcrypt
-
 from app import utils
 from app.database import database_functions
 from app.models.user_model import User
-
-
 
 
 async def get_all_users():
@@ -39,7 +36,7 @@ async def get_user_by_id(user_id):
            Exception: For any other unexpected errors.
        """
     try:
-        user = await database_functions.get_by_id("users",user_id)
+        user = await database_functions.get_by_id("users", user_id)
         if user is None:
             raise ValueError("User not found")
         return user
@@ -65,11 +62,9 @@ async def create_user(new_user: User):
         hashed_password = bcrypt.hashpw(new_user.password.encode('utf-8'), bcrypt.gensalt())
         new_user.password = hashed_password.decode('utf-8')
         user = new_user.dict()
-        return await database_functions.add("users",user)
+        return await database_functions.add("users", user)
     except Exception as e:
         raise e
-
-
 
 
 async def update_user(user_id: int, new_user: User):
@@ -90,7 +85,7 @@ async def update_user(user_id: int, new_user: User):
         new_user.password = hashed_password.decode('utf-8')
         new_user.id = user_id
         user = new_user.dict()
-        return await database_functions.update("users",user)
+        return await database_functions.update("users", user)
     except Exception as e:
         raise e
 
@@ -108,13 +103,13 @@ async def delete_user(user_id):
       """
     try:
         await get_user_by_id(user_id)
-        revenues_user = await database_functions.get_all_by_user_id("revenues",user_id)
-        expense_user = await database_functions.get_all_by_user_id("expenses",user_id)
+        revenues_user = await database_functions.get_all_by_user_id("revenues", user_id)
+        expense_user = await database_functions.get_all_by_user_id("expenses", user_id)
         for revenue in revenues_user:
-            await database_functions.delete("revenues",revenue['id'])
+            await database_functions.delete("revenues", revenue['id'])
         for expense in expense_user:
-            await database_functions.delete("expenses",expense['id'])
-        return await database_functions.delete("users",user_id)
+            await database_functions.delete("expenses", expense['id'])
+        return await database_functions.delete("users", user_id)
     except ValueError as ve:
         raise ve
     except Exception as e:
@@ -138,7 +133,8 @@ async def login_user(user_name, user_password):
         if not all_users:
             raise ValueError('List users not found')
         for user in all_users:
-            if user['name'] == user_name and bcrypt.checkpw(user_password.encode('utf-8'), user['password'].encode('utf-8')):
+            if user['name'] == user_name and bcrypt.checkpw(user_password.encode('utf-8'),
+                                                            user['password'].encode('utf-8')):
                 return [user]
         raise ValueError("User not found or invalid password")
     except ValueError as ve:

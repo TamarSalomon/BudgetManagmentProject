@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from app.models.user_model import User
 from app.services import users_service
-from app.validition import validition_functions
+from app.utils import log_function_call
 
 user_router = APIRouter()
 
 
 @user_router.get('/users')
+@log_function_call
 async def get_all_users():
     """
        Retrieve all users from the database.
@@ -26,6 +27,7 @@ async def get_all_users():
 
 
 @user_router.get('/users/{user_id}')
+@log_function_call
 async def get_user_by_id(user_id: int):
     """
        Retrieve a user by their ID.
@@ -48,6 +50,7 @@ async def get_user_by_id(user_id: int):
 
 
 @user_router.post('')
+@log_function_call
 async def add_user(new_user: User):
     """
     Create a new user.
@@ -69,29 +72,29 @@ async def add_user(new_user: User):
 
 
 @user_router.put('/{user_id}')
+@log_function_call
 async def update_user(user_id: int, new_user: User):
+    """
+      Update an existing user.
 
-        """
-          Update an existing user.
+      Args:
+          user_id (int): The ID of the user to be updated.
+          new_user (User): The updated user object.
 
-          Args:
-              user_id (int): The ID of the user to be updated.
-              new_user (User): The updated user object.
+      Returns:
+        str: A success message indicating the user was updated.
 
-          Returns:
-            str: A success message indicating the user was updated.
-
-          Raises:
-              HTTPException: If any server error occurs (500).
-          """
-        try:
-            return await users_service.update_user(user_id, new_user)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
+      Raises:
+          HTTPException: If any server error occurs (500).
+      """
+    try:
+        return await users_service.update_user(user_id, new_user)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @user_router.delete('/{user_id}')
+@log_function_call
 async def delete_user(user_id: int):
     """
        Delete a user by their ID.
@@ -113,8 +116,8 @@ async def delete_user(user_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
 @user_router.post('/login')
+@log_function_call
 async def login_user(user_name: str, user_password: str):
     """
        Authenticate a user with their username and password.

@@ -1,12 +1,13 @@
-from fastapi import APIRouter, HTTPException,Depends
+from fastapi import APIRouter, HTTPException
 from app.models.expense_model import Expense
 from app.services import expenses_service
-from app.validition import validition_functions
+from app.utils import log_function_call
+
 expense_router = APIRouter()
 
 
-
 @expense_router.get('/expenses/{user_id}')
+@log_function_call
 async def get_all_expenses_by_user_id(user_id: int):
     """
         Retrieve all expenses for a specific user.
@@ -29,6 +30,7 @@ async def get_all_expenses_by_user_id(user_id: int):
 
 
 @expense_router.get('/{expense_id}')
+@log_function_call
 async def get_expense_by_id(expense_id: int):
     """
        Retrieve an expense by its ID.
@@ -50,9 +52,8 @@ async def get_expense_by_id(expense_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-
 @expense_router.post('/create_expense_to_user/{user_id}')
+@log_function_call
 async def add_expense(user_id: int, new_expense: Expense):
     """
         Create a new expense for a specific user.
@@ -76,6 +77,7 @@ async def add_expense(user_id: int, new_expense: Expense):
 
 
 @expense_router.put('/update_expense/{expense_id}')
+@log_function_call
 async def update_expense(expense_id: int, new_expense: Expense):
     """
      Update an existing expense.
@@ -99,6 +101,7 @@ async def update_expense(expense_id: int, new_expense: Expense):
 
 
 @expense_router.delete('/delete_expense/{expense_id}')
+@log_function_call
 async def delete_expense(expense_id: int):
     """
        Delete an expense by its ID.
@@ -118,5 +121,3 @@ async def delete_expense(expense_id: int):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
