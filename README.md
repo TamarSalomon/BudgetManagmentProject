@@ -72,8 +72,7 @@ To get started with BudgetManagment:
    ```sh
    python main.py
 
-***The project file tree:***
-
+## The project file tree:
 ![image](https://github.com/TamarSalomon/BudgetManagmentProject/assets/152272661/1a9debde-3b9d-4102-8fa4-79f7fe9be278)
 
 
