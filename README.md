@@ -55,6 +55,9 @@ Welcome to our Expense and Revenue Management System! This project is designed t
 
 Comprehensive documentation is provided for all system functionalities.
 
+## Logging Decorator
+decorator that performs logging operations within the system. The decorator captures logs of function executions and saves them to a specified file.
+
 ## Installation and Usage
 
 To get started with BudgetManagment:
