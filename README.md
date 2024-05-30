@@ -32,6 +32,7 @@ Welcome to our Expense and Revenue Management System! This project is designed t
   - **Register:** `/register`
   - **Update User:** `/update_user`
   - **Delete User:** `/delete_user`
+  - **Retrieve:** `/user/retrieve`
 
 ### For Expenses:
   - **Add:** `/expenses/add`
@@ -72,6 +73,7 @@ To get started with BudgetManagment:
    python main.py
 
 ***The project file tree:***
+
 ![image](https://github.com/TamarSalomon/BudgetManagmentProject/assets/152272661/1a9debde-3b9d-4102-8fa4-79f7fe9be278)
 
 
@@ -83,7 +85,6 @@ To get started with BudgetManagment:
 
   Thank you for using our Expense and Revenue Management System! We hope it helps you manage your finances effectively. Feel free to reach out for any assistance or feedback.
 
-  Happy budgeting! 📊💰
-
+  Happy budgeting!
 
 
