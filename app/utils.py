@@ -12,11 +12,11 @@ logging.basicConfig(level=logging.INFO,
                     filename=log_path,
                     filemode='a')
 
-
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     filename='log.txt',
                     filemode='a')
+
 
 def log_function_call(func):
     """
@@ -34,14 +34,16 @@ def log_function_call(func):
 
     @wraps(func)
     async def async_wrapper(*args, **kwargs):
-        logging.info(f"Calling async function '{func.__name__}' with arguments {args} and keyword arguments {kwargs}")
+        logging.info(
+            f"Calling async function '{func.__name__}' with arguments {args} and keyword arguments {kwargs}")
         result = await func(*args, **kwargs)
         logging.info(f"Async function '{func.__name__}' returned {result}")
         return result
 
     @wraps(func)
     def sync_wrapper(*args, **kwargs):
-        logging.info(f"Calling function '{func.__name__}' with arguments {args} and keyword arguments {kwargs}")
+        logging.info(
+            f"Calling function '{func.__name__}' with arguments {args} and keyword arguments {kwargs}")
         result = func(*args, **kwargs)
         logging.info(f"Function '{func.__name__}' returned {result}")
         return result
@@ -60,6 +62,7 @@ def to_json(data):
     if isinstance(data, ObjectId):
         return str(data)
     return data
+
 
 async def last_id(collection_name):
     """
