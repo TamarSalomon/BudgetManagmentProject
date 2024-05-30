@@ -72,34 +72,8 @@ To get started with BudgetManagment:
    python main.py
 
 ***The project file tree:***
-BudgetManagment
-├── APP
-│   ├── database
-│   │   ├── database_connection.py
-│   │   └── database_functions.py
-│   ├── models
-│   │   ├── expense_model.py
-│   │   ├── revenue_model.py
-│   │   └── user_model.py
-│   ├── routes
-│   │   ├── expenses_router.py
-│   │   ├── revenues_router.py
-│   │   └── users_router.py
-│   ├── services
-│   │   ├── expenses_service.py
-│   │   ├── revenues_service.py
-│   │   ├── users_service.py
-│   │   └── visualization_service.py
-│   ├── tests
-│   │   ├── expenses_router_tests.py
-│   │   ├── revenues_router_tests.py
-│   │   └── users_router_tests.py
-│   ├── validition
-│   │   └── validition_functions.py
-│   ├── main.py
-│   └── utils.py
-├── README.md
-└── requirements.txt
+![image](https://github.com/TamarSalomon/BudgetManagmentProject/assets/152272661/1a9debde-3b9d-4102-8fa4-79f7fe9be278)
+
 
 
 
